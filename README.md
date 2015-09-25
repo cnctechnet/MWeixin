@@ -1,0 +1,2 @@
+# MWeixin
+MiCOKit WEIXIN test
