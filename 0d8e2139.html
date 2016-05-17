@@ -45,7 +45,7 @@
  </div>
 
  <div class="button-bar">
-     <a class="button" style="background:red; color:white" id="led_red">Red</a>
+     <a class="button" style="background:red; color:white" id="led_red">温度</a>
      <a class="button" style="background:green; color:white" id="led_green">Green</a>
      <a class="button" style="background:blue; color:white" id="led_blue">Blue</a>
  </div>
@@ -126,7 +126,15 @@
         }
         // 消息到达
         function onMessageArrived(message) {
-            console.log(message.topic + ': ' +  message.payloadString);
+        	var payloadString = message.payloadString
+            if (payloadString.startWith('ok T:')) { // suppose to be tem..
+            	var output
+            	output += payloadString.substring(payloadString.search(/T:/) + 2, payloadString.search(/T:/) + 5) + ', '
+            	output += payloadString.substring(payloadString.search(/B:/) + 2, payloadString.search(/B:/) + 5)
+            	console.log('温度: ' +  output);
+            } else {
+            	console.log(message.topic + ': ' +  message.payloadString);
+        	}
         }
 
         // 串口数据发送部分
@@ -161,7 +169,7 @@
 
         function led_red() {
             var topic = device_id+'/in/write';
-            var commond = '{"rgbled_switch":true,"rgbled_hues":0, "rgbled_saturation":100, "rgbled_brightness":100}'; 
+            var commond = 'M105'//'{"rgbled_switch":true,"rgbled_hues":0, "rgbled_saturation":100, "rgbled_brightness":100}'; 
             client.publish(topic, commond);
         }
         // document.querySelector('#led_red').addEventListener('touchstart', led_red);
