@@ -4,11 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width" />
     <title>MiCOKit08</title>
-    <link href="//code.ionicframework.com/1.0.0-beta.13/css/ionic.css" rel="stylesheet">
+    <link href="https://code.ionicframework.com/1.0.0-beta.13/css/ionic.css" rel="stylesheet">
     <style>
+	    #content {
+	    	margin-top: 64px;
+	    }
         #debug {
-            margin-top:44px;
-            background-color: white;
+        	bottom: 53px;
+        	width: 100%; 
+        	position: absolute;
+            background-color: #2D2B35;
             height: 300px;
             overflow: scroll;
             color: black;
@@ -28,23 +33,39 @@
         }
     </style>
 </head>
-<body>
-    <div class="bar bar-header bar-assertive">
-      <h1 class="title" id="device_id"></h1>
+<body style="background: #1A191F">
+    <div class="bar bar-header bar-assertive" style="background: linear-gradient(#2ED8AF, #2FC7C3); border-width: 0">
+      <h1 class="title" id="device_id">Device ID</h1>
+  </div>
+  <div id="content" class="list card" style="background: #1A191F; color: #A3A3A3">
+	  	<a id="j_m105-t" href="javascript:;" class="item item-icon-left" style="background: #1A191F; border-color: #2D2B35">
+	  		<i class="icon ion-thermometer" style="font-size: 18px"></i>
+	  		喷头温度
+    		<span class="item-note">-</span>
+	  	</a>
+	  	<a id="j_m105-b" href="javascript:;" class="item item-icon-left" style="background: #1A191F; border-color: #2D2B35">
+	  		<i class="icon ion-speedometer" style="font-size: 18px"></i>
+	  		热床温度
+    		<span class="item-note">-</span>
+	  	</a>
+	  	<a id="j_m114" href="javascript:;" class="item item-icon-left" style="background: #1A191F; border-color: #2D2B35">
+	  		<i class="icon ion-navigate" style="font-size: 18px"></i>
+	  		喷头坐标
+    		<span class="item-note">-</span>
+	  	</a>
   </div>
   <div id="debug"></div>
-
-  <div class="bar-footer" style="bottom:0;position:absolute;width:100%">
-     <div class="item item-input-inset">
-       <label class="item-input-wrapper">
+  <div class="bar-footer" style="bottom:0; position:absolute; width:100%; border-top: 1px solid #1A191F">
+     <div class="item item-input-inset" style="background: #2D2B35; border-width: 0">
+       <label class="item-input-wrapper" style="background: #1A191F">
          <input type="text" placeholder="message" id="message">
      </label>
-     <button class="button button-small button-royal" id="send2uart">
+     <button class="button button-small button-royal" id="send2uart" style="padding: 2px 12px; background: #2D2B35; border-color: #34CFBB; color: #34CFBB">
          Uart
      </button>
  </div>
 
- <div class="button-bar">
+ <!-- <div class="button-bar">
      <a class="button" style="background:red; color:white" id="led_red">温度</a>
      <a class="button" style="background:green; color:white" id="led_green">Green</a>
      <a class="button" style="background:blue; color:white" id="led_blue">Blue</a>
@@ -52,7 +73,7 @@
  <div class="button-bar">
      <a class="button" style="background:white; color:black" id="led_on">On</a>
      <a class="button" style="background:black; color:white" id="led_off">Off</a>
- </div>
+ </div> -->
 </div>
 
 <script src="http://api.easylink.io/assets/js/mqttws31.js"></script>
@@ -128,13 +149,14 @@
         function onMessageArrived(message) {
         	var payloadString = message.payloadString
             if (payloadString.startWith('ok T:')) { // suppose to be tem..
-            	var output
-            	output += payloadString.substring(payloadString.search(/T:/) + 2, payloadString.search(/T:/) + 5) + ', '
-            	output += payloadString.substring(payloadString.search(/B:/) + 2, payloadString.search(/B:/) + 5)
-            	console.log('温度: ' +  output);
-            } else {
-            	console.log(message.topic + ': ' +  message.payloadString);
-        	}
+            	var tempT = payloadString.substring(payloadString.search(/T:/) + 2, payloadString.search(/T:/) + 5)
+            		tempB = payloadString.substring(payloadString.search(/B:/) + 2, payloadString.search(/B:/) + 5)
+        		document.querySelector('#j_m105-t .item-note').innerHTML = tempT;
+        		document.querySelector('#j_m105-b .item-note').innerHTML = tempB;
+            } else if (payloadString.startWith('X:')) {
+            	document.querySelector('#j_m114 .item-note').innerHTML = payloadString.substring(0, payloadString.search(/E:/))
+            } 
+            console.log(message.topic + ': ' +  message.payloadString);
         }
 
         // 串口数据发送部分
@@ -151,46 +173,61 @@
         // document.querySelector('#send2uart').addEventListener('touchstart', send2uart);
         document.querySelector('#send2uart').addEventListener('click', send2uart);
 
-        function led_on() {
+        function sendm105() {
             var topic = device_id+'/in/write';
-            var commond = '{"rgbled_switch":true}';
+            var commond = 'M105';
             client.publish(topic, commond);
         }
-        // document.querySelector('#led_on').addEventListener('touchstart', led_on);
-        document.querySelector('#led_on').addEventListener('click', led_on);
+        document.querySelector('#j_m105-t').addEventListener('click', sendm105);
+        document.querySelector('#j_m105-b').addEventListener('click', sendm105);
 
-        function led_off() {
+        function sendm114() {
             var topic = device_id+'/in/write';
-            var commond = '{"rgbled_switch":false}';
+            var commond = 'M114';
             client.publish(topic, commond);
         }
-        // document.querySelector('#led_off').addEventListener('touchstart', led_off);
-        document.querySelector('#led_off').addEventListener('click', led_off);
+        document.querySelector('#j_m114').addEventListener('click', sendm114);
 
-        function led_red() {
-            var topic = device_id+'/in/write';
-            var commond = 'M105'//'{"rgbled_switch":true,"rgbled_hues":0, "rgbled_saturation":100, "rgbled_brightness":100}'; 
-            client.publish(topic, commond);
-        }
-        // document.querySelector('#led_red').addEventListener('touchstart', led_red);
-        document.querySelector('#led_red').addEventListener('click', led_red);
+    //     function led_on() {
+    //         var topic = device_id+'/in/write';
+            // var commond = '{"rgbled_switch":true}';
+    //         client.publish(topic, commond);
+    //     }
+    //     // document.querySelector('#led_on').addEventListener('touchstart', led_on);
+    //     document.querySelector('#led_on').addEventListener('click', led_on);
 
-        function led_green() {
-            var topic = device_id+'/in/write';
-            var commond = '{"rgbled_switch":true,"rgbled_hues":120, "rgbled_saturation":100, "rgbled_brightness":100}'; 
-            client.publish(topic, commond);
-        }
-        // document.querySelector('#led_green').addEventListener('touchstart', led_green);
-        document.querySelector('#led_green').addEventListener('click', led_green);
+    //     function led_off() {
+    //         var topic = device_id+'/in/write';
+    //         var commond = '{"rgbled_switch":false}';
+    //         client.publish(topic, commond);
+    //     }
+    //     // document.querySelector('#led_off').addEventListener('touchstart', led_off);
+    //     document.querySelector('#led_off').addEventListener('click', led_off);
 
-        function led_blue() {
-            var topic = device_id+'/in/write';
-            var commond = '{"rgbled_switch":true,"rgbled_hues":240, "rgbled_saturation":100, "rgbled_brightness":100}'; 
-            client.publish(topic, commond);
-        }
-        // document.querySelector('#led_blue').addEventListener('touchstart', led_blue);
-        document.querySelector('#led_blue').addEventListener('click', led_blue);
-    }
+    //     function led_red() {
+    //         var topic = device_id+'/in/write';
+    //         var commond = 'M105'//'{"rgbled_switch":true,"rgbled_hues":0, "rgbled_saturation":100, "rgbled_brightness":100}'; 
+    //         client.publish(topic, commond);
+    //     }
+    //     // document.querySelector('#led_red').addEventListener('touchstart', led_red);
+    //     document.querySelector('#led_red').addEventListener('click', led_red);
+
+    //     function led_green() {
+    //         var topic = device_id+'/in/write';
+    //         var commond = '{"rgbled_switch":true,"rgbled_hues":120, "rgbled_saturation":100, "rgbled_brightness":100}'; 
+    //         client.publish(topic, commond);
+    //     }
+    //     // document.querySelector('#led_green').addEventListener('touchstart', led_green);
+    //     document.querySelector('#led_green').addEventListener('click', led_green);
+
+    //     function led_blue() {
+    //         var topic = device_id+'/in/write';
+    //         var commond = '{"rgbled_switch":true,"rgbled_hues":240, "rgbled_saturation":100, "rgbled_brightness":100}'; 
+    //         client.publish(topic, commond);
+    //     }
+    //     // document.querySelector('#led_blue').addEventListener('touchstart', led_blue);
+    //     document.querySelector('#led_blue').addEventListener('click', led_blue);
+    // }
 
     // 日志打印在页面的部分    
     var i = 0;
