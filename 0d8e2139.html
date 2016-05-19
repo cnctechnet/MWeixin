@@ -175,7 +175,7 @@
 
         function sendm105() {
             var topic = device_id+'/in/write';
-            var commond = 'M105';
+            var commond = '{"11":"M105"}';
             client.publish(topic, commond);
         }
         document.querySelector('#j_m105-t').addEventListener('click', sendm105);
@@ -183,7 +183,7 @@
 
         function sendm114() {
             var topic = device_id+'/in/write';
-            var commond = 'M114';
+            var commond = '{"11":"M114"}';
             client.publish(topic, commond);
         }
         document.querySelector('#j_m114').addEventListener('click', sendm114);
