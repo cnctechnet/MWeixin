@@ -147,15 +147,18 @@
         }
         // 消息到达
         function onMessageArrived(message) {
-        	// var payloadString = message.payloadString
-         //    if (payloadString.startWith('ok T:')) { // suppose to be tem..
-         //    	var tempT = payloadString.substring(payloadString.search(/T:/) + 2, payloadString.search(/T:/) + 5)
-         //    		tempB = payloadString.substring(payloadString.search(/B:/) + 2, payloadString.search(/B:/) + 5)
-        	// 	document.querySelector('#j_m105-t .item-note').innerHTML = tempT;
-        	// 	document.querySelector('#j_m105-b .item-note').innerHTML = tempB;
-         //    } else if (payloadString.startWith('X:')) {
-         //    	document.querySelector('#j_m114 .item-note').innerHTML = payloadString.substring(0, payloadString.search(/E:/))
-         //    } 
+        	var response = JSON.parse(message.payloadString)[11];
+            if (response && response.startWith('ok T:')) { // suppose to be tem..
+            	var tempT = response.substring(response.search(/T:/) + 2, response.search(/T:/) + 5)
+            		tempB = response.substring(response.search(/B:/) + 2, response.search(/B:/) + 5)
+        		document.querySelector('#j_m105-t .item-note').innerHTML = tempT;
+        		document.querySelector('#j_m105-b .item-note').innerHTML = tempB;
+                console.log("tempT: " + tempT + ", tempB: " + tempB)
+            } else if (response.startWith('X:')) {
+                var location = response.substring(0, response.search(/E:/))
+            	document.querySelector('#j_m114 .item-note').innerHTML = location
+                console.log("location: " + location)
+            } 
             console.log(message.topic + ': ' +  message.payloadString);
         }
 
