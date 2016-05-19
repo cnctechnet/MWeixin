@@ -147,23 +147,20 @@
         }
         // 消息到达
         function onMessageArrived(message) {
-            console.log("onMessageArrived:" + message);
-            console.log("JSON.parse(message.payloadString):" + JSON.parse(message.payloadString));
-            console.log("response:" + JSON.parse(message.payloadString)[11]);
         	var response = JSON.parse(message.payloadString)[11];
-            if (response && response.startWith('ok T:')) { // suppose to be tem..
-                console.log('response.startWith("ok T:")');
-            	var tempT = response.substring(response.search(/T:/) + 2, response.search(/T:/) + 5)
-            		tempB = response.substring(response.search(/B:/) + 2, response.search(/B:/) + 5)
+            if (response && response.startsWith('ok T:')) { // suppose to be tem..
+            	var tempT = response.substring(response.search(/T:/) + 2, response.search(/T:/) + 6) + '℃'
+            		tempB = response.substring(response.search(/B:/) + 2, response.search(/B:/) + 6) + '℃'
         		document.querySelector('#j_m105-t .item-note').innerHTML = tempT;
         		document.querySelector('#j_m105-b .item-note').innerHTML = tempB;
                 console.log("tempT: " + tempT + ", tempB: " + tempB)
-            } else if (response.startWith('X:')) {
+            } else if (response.startsWith('X:')) {
                 var location = response.substring(0, response.search(/E:/))
             	document.querySelector('#j_m114 .item-note').innerHTML = location
                 console.log("location: " + location)
-            } 
-            console.log(message.topic + ': ' +  message.payloadString);
+            } else {
+                console.log(message.topic + ': ' +  message.payloadString);
+            }
         }
 
         // 串口数据发送部分
