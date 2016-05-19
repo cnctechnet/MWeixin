@@ -57,7 +57,7 @@
   <div id="debug"></div>
   <div class="bar-footer" style="bottom:0; position:absolute; width:100%; border-top: 1px solid #1A191F">
      <div class="item item-input-inset" style="background: #2D2B35; border-width: 0">
-       <label class="item-input-wrapper" style="background: #1A191F">
+       <label class="item-input-wrapper" style="background: #1A191F; color: white">
          <input type="text" placeholder="message" id="message">
      </label>
      <button class="button button-small button-royal" id="send2uart" style="padding: 2px 12px; background: #2D2B35; border-color: #34CFBB; color: #34CFBB">
@@ -148,16 +148,19 @@
         // 消息到达
         function onMessageArrived(message) {
         	var response = JSON.parse(message.payloadString)[11];
-            if (response && response.startsWith('ok T:')) { // suppose to be tem..
-            	var tempT = response.substring(response.search(/T:/) + 2, response.search(/T:/) + 6) + '℃'
-            		tempB = response.substring(response.search(/B:/) + 2, response.search(/B:/) + 6) + '℃'
-        		document.querySelector('#j_m105-t .item-note').innerHTML = tempT;
-        		document.querySelector('#j_m105-b .item-note').innerHTML = tempB;
-                console.log("tempT: " + tempT + ", tempB: " + tempB)
-            } else if (response.startsWith('X:')) {
-                var location = response.substring(0, response.search(/E:/))
-            	document.querySelector('#j_m114 .item-note').innerHTML = location
-                console.log("location: " + location)
+            if (response && typeof response === 'string') { 
+                console.log("response is type of string: " + response)
+                if (response.startsWith('ok T:')) { // suppose to be tem..
+                	var tempT = response.substring(response.search(/T:/) + 2, response.search(/T:/) + 6) + '℃'
+                		tempB = response.substring(response.search(/B:/) + 2, response.search(/B:/) + 6) + '℃'
+            		document.querySelector('#j_m105-t .item-note').innerHTML = tempT;
+            		document.querySelector('#j_m105-b .item-note').innerHTML = tempB;
+                    console.log("tempT: " + tempT + ", tempB: " + tempB)
+                } else if (response.startsWith('X:')) {
+                    var location = response.substring(0, response.search(/E:/))
+                	document.querySelector('#j_m114 .item-note').innerHTML = location
+                    console.log("location: " + location)
+                }
             } else {
                 console.log(message.topic + ': ' +  message.payloadString);
             }
