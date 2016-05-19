@@ -197,6 +197,13 @@
         }
         document.querySelector('#j_m114').addEventListener('click', sendm114);
 
+        function autoRefresh() {
+            sendm114()
+            sendm105()
+            t = setTimeout("autoRefresh()", 1000)
+        }
+        
+        autoRefresh()
     //     function led_on() {
     //         var topic = device_id+'/in/write';
             // var commond = '{"rgbled_switch":true}';
