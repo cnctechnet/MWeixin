@@ -200,9 +200,9 @@
         function autoRefresh() {
             sendm114()
             sendm105()
-            t = setTimeout("autoRefresh()", 1000)
+            t = setTimeout(autoRefresh(), 1000)
         }
-        
+
         autoRefresh()
     //     function led_on() {
     //         var topic = device_id+'/in/write';
