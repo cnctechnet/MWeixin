@@ -139,6 +139,7 @@
             console.log("device_id:"+device_id);
             console.log("onConnect");
             client.subscribe(subtopic, {qos: 0});
+	        autoRefresh();
         }
         // 连接丢失
         function onConnectionLost(responseObject) {
@@ -161,9 +162,8 @@
                 	document.querySelector('#j_m114 .item-note').innerHTML = location
                     console.log("location: " + location)
                 }
-            } else {
-                console.log(message.topic + ': ' +  message.payloadString);
             }
+            console.log(message.topic + ': ' +  message.payloadString);
         }
 
         // 串口数据发送部分
@@ -202,8 +202,6 @@
             sendm105()
             t = setTimeout(autoRefresh(), 1000)
         }
-
-        autoRefresh()
     //     function led_on() {
     //         var topic = device_id+'/in/write';
             // var commond = '{"rgbled_switch":true}';
