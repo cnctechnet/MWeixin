@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html ng-app="ionicApp">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width" />
     <title>MiCOKit08</title>
-    <link href="//code.ionicframework.com/1.0.0-beta.13/css/ionic.css" rel="stylesheet">
+    <link href="http://code.ionicframework.com/1.0.0-beta.13/css/ionic.css" rel="stylesheet">
     <style>
 	    #content {
 	    	margin-top: 64px;
@@ -14,7 +14,7 @@
         	width: 100%; 
         	position: absolute;
             background-color: #2D2B35;
-            height: 300px;
+            height: 150px;
             overflow: scroll;
             color: black;
             font-size: 12px;
@@ -35,24 +35,63 @@
 </head>
 <body style="background: #1A191F">
     <div class="bar bar-header bar-assertive" style="background: linear-gradient(#2ED8AF, #2FC7C3); border-width: 0">
-      <h1 class="title" id="device_id">Device ID</h1>
+      <h1 class="title" id="device_id">ZJUmaker</h1>
   </div>
   <div id="content" class="list card" style="background: #1A191F; color: #A3A3A3">
 	  	<a id="j_m105-t" href="javascript:;" class="item item-icon-left" style="background: #1A191F; border-color: #2D2B35">
 	  		<i class="icon ion-thermometer" style="font-size: 18px"></i>
 	  		喷头温度
-    		<span class="item-note">-</span>
+    		<span class="item-note">0℃</span>
 	  	</a>
 	  	<a id="j_m105-b" href="javascript:;" class="item item-icon-left" style="background: #1A191F; border-color: #2D2B35">
 	  		<i class="icon ion-speedometer" style="font-size: 18px"></i>
 	  		热床温度
-    		<span class="item-note">-</span>
+    		<span class="item-note">0℃</span>
 	  	</a>
-	  	<a id="j_m114" href="javascript:;" class="item item-icon-left" style="background: #1A191F; border-color: #2D2B35">
-	  		<i class="icon ion-navigate" style="font-size: 18px"></i>
-	  		喷头坐标
-    		<span class="item-note">-</span>
-	  	</a>
+        <a id="j_m114" href="javascript:;" class="item item-icon-left" style="background: #1A191F; border-color: #2D2B35">
+            <i class="icon ion-navigate" style="font-size: 18px"></i>
+            喷头坐标
+            <span class="item-note">X: 0.0, Y: 0.0, Z: 575.0</span>
+        </a>
+        <a id="j_m220" href="javascript:;" class="item item-icon-left" style="background: #1A191F; border-color: #2D2B35">
+            <i class="icon ion-log-in" style="font-size: 18px"></i>
+            设定进给速度
+            <span class="item-note">
+                <span id="m220-input-value" style="padding-bottom: 2px; text-decoration: underline">100.0
+                </span>&nbsp;&nbsp;&nbsp;&nbsp;
+                <button style="line-height: 12px; font-size: 10px; padding: 2px 12px; background: #2D2B35; border-color: #34CFBB; color: #34CFBB">
+                     确定
+                 </button>
+            </span>
+        </a>
+        <a id="j_m221" href="javascript:;" class="item item-icon-left" style="background: #1A191F; border-color: #2D2B35">
+            <i class="icon ion-log-out" style="font-size: 18px"></i>
+            设定挤出速度
+            <span class="item-note">
+                <span id="m221-input-value" style="padding-bottom: 2px; text-decoration: underline">100.0
+                </span>&nbsp;&nbsp;&nbsp;&nbsp;
+                <button style="line-height: 12px; font-size: 10px; padding: 2px 12px; background: #2D2B35; border-color: #34CFBB; color: #34CFBB">
+                     确定
+                 </button>
+            </span>
+        </a>
+        <a id="j_g91" href="javascript:;" class="item item-icon-left" style="background: #1A191F; border-color: #2D2B35">
+            <i class="icon ion-settings" style="font-size: 18px"></i>
+            手动控制
+            <span class="item-note">
+            x:
+                <i id="j_g1-x" class="ion-arrow-up-a" style="font-size: 16px"></i>
+                <i id="j_g1-x-" class="ion-arrow-down-a" style="font-size: 16px"></i>
+            &nbsp;&nbsp;y:
+                <i id="j_g1-y" class="ion-arrow-left-a" style="font-size: 16px"></i>
+                <i id="j_g1-y-" class="ion-arrow-right-a" style="font-size: 16px"></i>
+            &nbsp;&nbsp;z:
+                <i id="j_g1-z" class="ion-arrow-up-a" style="font-size: 16px"></i>
+                <i id="j_g1-z-" class="ion-arrow-down-a" style="font-size: 16px"></i>
+            &nbsp;&nbsp;reset: 
+                <i id="j_g28" class="ion-home" style="font-size: 18px"></i>
+            </span>
+        </a>
   </div>
   <div id="debug"></div>
   <div class="bar-footer" style="bottom:0; position:absolute; width:100%; border-top: 1px solid #1A191F">
@@ -184,7 +223,7 @@
             var topic = device_id+'/in/write';
             var commond = '{"11":"M105"}';
             client.publish(topic, commond);
-            console.log("M105");
+            console.log(commond);
         }
         document.querySelector('#j_m105-t').addEventListener('click', sendm105);
         document.querySelector('#j_m105-b').addEventListener('click', sendm105);
@@ -193,15 +232,92 @@
             var topic = device_id+'/in/write';
             var commond = '{"11":"M114"}';
             client.publish(topic, commond);
-            console.log("M114");
+            console.log(commond);
         }
         document.querySelector('#j_m114').addEventListener('click', sendm114);
 
-        function autoRefresh() {
-            sendm114()
-            sendm105()
-            t = setTimeout(autoRefresh(), 1000)
+        function sendm220() {
+            var topic = device_id+'/in/write';
+            var value = document.querySelector('#m220-input-value').innerHTML.trim();
+            var commond = '{"11":"M220 S' + value + '"}';
+            client.publish(topic, commond);
+            console.log(commond);
         }
+        document.querySelector('#j_m220').addEventListener('click', sendm220);
+
+        function sendm221() {
+            var topic = device_id+'/in/write';
+            var value = document.querySelector('#m221-input-value').innerHTML.trim();
+            var commond = '{"11":"M221 S' + value + '"}';
+            client.publish(topic, commond);
+            console.log(commond);
+        }
+        document.querySelector('#j_m221').addEventListener('click', sendm221);
+
+        var validate = false
+
+        function sendg91() {
+            if (validate) {
+                return
+            }
+            var topic = device_id+'/in/write';
+            var commond = '{"11":"G91"}';
+            validate = true
+            client.publish(topic, commond);
+            console.log(commond);
+        }
+        document.querySelector('#j_g91')
+                .addEventListener('click', sendg91);
+
+        function sendg1(value) {
+            if (!validate) {
+                sendg91()
+                return
+            }
+            var topic = device_id+'/in/write';
+            var commond = '{"11":"G1 ' + value + ' F4100"}';
+            client.publish(topic, commond);
+            console.log(commond);
+        }
+
+        document.querySelector('#j_g1-x')
+                .addEventListener('click', function(){
+                    sendg1('X10')
+                });
+        document.querySelector('#j_g1-x-')
+                .addEventListener('click', function(){
+                    sendg1('X-10')
+                });
+        document.querySelector('#j_g1-y')
+                .addEventListener('click', function(){
+                    sendg1('Y10')
+                });
+        document.querySelector('#j_g1-y-')
+                .addEventListener('click', function(){
+                    sendg1('Y-10')
+                });
+        document.querySelector('#j_g1-z')
+                .addEventListener('click', function(){
+                    sendg1('Z10')
+                });
+        document.querySelector('#j_g1-z-')
+                .addEventListener('click', function(){
+                    sendg1('Z-10 ')
+                });
+
+        function sendg28(value) {
+            var topic = device_id+'/in/write';
+            var commond = '{"11":"G28"}';
+            client.publish(topic, commond);
+            console.log(commond);
+        }
+        document.querySelector('#j_g28')
+                .addEventListener('click', sendg28);
+        // function autoRefresh() {
+        //     sendm114()
+        //     sendm105()
+        //     t = setTimeout(autoRefresh(), 1000)
+        // }
     //     function led_on() {
     //         var topic = device_id+'/in/write';
             // var commond = '{"rgbled_switch":true}';
